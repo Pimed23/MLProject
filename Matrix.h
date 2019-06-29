@@ -162,7 +162,6 @@ void Matrix<Type>::fillArchive( string name ) {
         ++a;
         b = 0;
     }
-    cout << M << endl;
 
     *this = M;
     archive.close();
