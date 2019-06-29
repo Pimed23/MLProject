@@ -1,14 +1,14 @@
 #include <iostream>
 #include <vector>
 #include <thread>
-#include "Matriz.h"
+#include "Matrix.h"
+#include "Utilities.h"
 
 using namespace std;
 
 int main() {
-    Matrix<double> M1( 2, 4 );
-    M1.fillArchive("data.txt");
-    cout << M1 << endl;
-    return 0;
+    Matrix <double> M( 5000, 400 );
+    M.fillArchive("Xdata.txt");
+    sigmoidFunction( M );
 
 }
