@@ -39,7 +39,6 @@ class Matrix {
         Matrix<Type> operator=( const Matrix & );
         Matrix<Type> operator/( const Matrix & );
         Matrix<Type> operator%( const Matrix & );
-        Matrix<Type> operator^( const double );
 
         Type* operator[]( const int i ) {  
             return *( matrix + i );
@@ -199,8 +198,8 @@ template < typename Type >
 Matrix<Type> Matrix<Type>::cutOnes() {
     Matrix<Type> M( row, col - 1 );
     for( int i = 0; i < row; ++i )
-        for( int j = 0; j < col; ++j )
-            *( *( M.matrix + i ) + j ) = *( *( matrix + i ) + j + 1 );
+        for( int j = col - 1; j != 0; --j )
+            *( *( M.matrix + i ) + j - 1 ) = *( *( matrix + i ) + j );
     return M;
 }
 
@@ -366,12 +365,12 @@ Matrix<Type> Matrix<Type>::sumScalar( double scalar ) {
 
 template< typename Type >
 Matrix<Type> Matrix<Type>::powTwice() {
+    Matrix<Type> B( row, col );  
     for( int i = 0; i < row; ++i )
         for( int j = 0; j < col; ++j )
-            *(*( matrix + i ) + j ) =  *(*( matrix + i ) + j ) *  *(*( matrix + i ) + j );
-    return *this;
+            *(*( B.matrix + i ) + j ) =  *(*( matrix + i ) + j ) *  *(*( matrix + i ) + j );
+    return B;
 }
-
 
 template < typename Type >
 double Matrix<Type>::addAll() {
