@@ -24,8 +24,17 @@ int main() {
     n.push_back(25);
     n.push_back(10);
     
+    Matrix<double> t1(25,401);
+    t1.fillArchive("Theta1data.txt");
+    Matrix<double> t2(10,26);
+	t2.fillArchive("Theta2data.txt");
 	
-    NeuralNetwork a(3,n,X,y);
-    a.feedForwardPropagation(0);
+    NeuralNetwork a(3,n,X,y,1.0);
+  //a.setWeightsByLayer(0,t1);
+  //a.setWeightsByLayer(1,t2);
+    
+    //a.backPropagation();
+    a.gradientDescent(0.2);
+    
     return 0;
 }

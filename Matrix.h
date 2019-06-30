@@ -35,6 +35,7 @@ class Matrix {
         Matrix<Type> multScalar( double );
         Matrix<Type> sumScalar( double );
         Matrix<Type> powTwice();
+        Matrix<Type> multDouble( double );
 
         Matrix<Type> transpose();
         Matrix<Type> operator+( const Matrix & );
@@ -398,6 +399,17 @@ Matrix<Type> Matrix<Type>::multScalar( double scalar ) {
         for( int j = 0; j < col; j++ )
             *( *( matrix + i ) + j ) = *( *( matrix + i ) + j ) * scalar;
     return *this;
+}
+
+template<typename Type>
+Matrix<Type> Matrix<Type>::multDouble( double n){
+	Matrix<Type> aux(this->getRow(),this->getCol());
+	for(int i=0; i<row; i++){
+		for(int j=0; j<col; j++){
+			*(*(aux.matrix+i)+j) = *(*(this->matrix+i)+j) * n;
+		}
+	}
+	return aux;
 }
 
 template< typename Type >

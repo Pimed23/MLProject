@@ -14,6 +14,7 @@ class Layer{
 		int noUnits;
 		Matrix<double> units_a;
 		Matrix<double> weights;
+		Matrix<double> partialDerivatives;
 	public:
 		Layer();
 		Layer(const Matrix<double>& units_a,int unitsLayerIn,int unitsLayerOut);
@@ -22,10 +23,11 @@ class Layer{
 		int getNoUnits ();
 		Matrix<double>& getUnits_a();
 		Matrix<double>& getWeights();
+		Matrix<double>& getPartialDerivatives();
 		void setNoUnits(int noUnits);
 		void setUnits_a(const Matrix<double>& units_a);
 		void setWeights(const Matrix<double>& weights);
-		
+		void setPartialDerivatives(const Matrix<double>& partialDerivatives);
 };
 
 Layer::Layer(){
@@ -61,6 +63,10 @@ Matrix<double>& Layer::getWeights(){
 	return this->weights;
 }
 
+Matrix<double>& Layer::getPartialDerivatives(){
+	return this->partialDerivatives;
+}
+
 void Layer::setNoUnits(int noUnits){
 	this->noUnits = noUnits;
 }
@@ -71,6 +77,10 @@ void Layer::setUnits_a(const Matrix<double>& units_a){
 
 void Layer::setWeights(const Matrix<double>& weights){
 	this->weights = weights;
+}
+
+void Layer::setPartialDerivatives(const Matrix<double>& partialDerivatives){
+	this->partialDerivatives = partialDerivatives;
 }
 
 #endif
