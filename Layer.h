@@ -8,23 +8,23 @@
 
 using namespace std;
 
+//Incluye BIAS en unitsZ y noUnits, menos la última capa
 class Layer{
 	private:
 		int noUnits;
-		Matrix<double> unitsZ;
+		Matrix<double> units_a;
 		Matrix<double> weights;
 	public:
 		Layer();
-		Layer(const Matrix<double>& unitsZ,int unitsLayerIn,int unitsLayerOout);
+		Layer(const Matrix<double>& units_a,int unitsLayerIn,int unitsLayerOut);
 		Layer(const Layer& copy);
 		~Layer();
 		int getNoUnits ();
-		Matrix<double>& getUnitsZ();
+		Matrix<double>& getUnits_a();
 		Matrix<double>& getWeights();
 		void setNoUnits(int noUnits);
-		void setUnitsZ(const Matrix<double>& unitsZ);
+		void setUnits_a(const Matrix<double>& units_a);
 		void setWeights(const Matrix<double>& weights);
-		Matrix<double> getSigmoidZ();
 		
 };
 
@@ -32,15 +32,16 @@ Layer::Layer(){
 	this->noUnits = 0;
 }
 
-Layer::Layer(const Matrix<double>& unitsZ,int unitsLayerIn,int unitsLayerOut){
-	this->weights=randInitializeWeights(unitsLayerIn,unitsLayerOut);
-	this->noUnits=unitsLayerIn;
-	this->unitsZ=unitsZ;
+//El unitsZ que recibe debe incluir BIAS
+Layer::Layer(const Matrix<double>& units_a,int unitsLayerIn,int unitsLayerOut){
+	this->weights = randInitializeWeights(unitsLayerIn,unitsLayerOut);
+	this->noUnits = unitsLayerIn + 1;
+	this->units_a = units_a;
 }
 
 Layer::Layer(const Layer& copy){
 	this->noUnits = copy.noUnits;
-	this->unitsZ  = copy.unitsZ;
+	this->units_a  = copy.units_a;
 	this->weights = copy.weights;
 }
 
@@ -52,8 +53,8 @@ int Layer::getNoUnits (){
 	return this->noUnits;
 }
 
-Matrix<double>& Layer::getUnitsZ(){
-	return this->unitsZ;
+Matrix<double>& Layer::getUnits_a(){
+	return this->units_a;
 }
 
 Matrix<double>& Layer::getWeights(){
@@ -64,18 +65,12 @@ void Layer::setNoUnits(int noUnits){
 	this->noUnits = noUnits;
 }
 
-void Layer::setUnitsZ(const Matrix<double>& unitsZ){
-	this->unitsZ = unitsZ;
+void Layer::setUnits_a(const Matrix<double>& units_a){
+	this->units_a = units_a;
 }
 
 void Layer::setWeights(const Matrix<double>& weights){
 	this->weights = weights;
-}
-
-Matrix<double> Layer::getSigmoidZ(){
-	Matrix<double> aux=this->unitsZ;
-	sigmoidFunction(aux);
-	return aux;
 }
 
 #endif
