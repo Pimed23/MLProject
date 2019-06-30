@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <thread>
+#include <tgmath.h>
 using namespace std;
 
 template < typename Type >
@@ -24,8 +25,11 @@ class Matrix {
         int getRow();
         int getCol();
 
+        Matrix<Type> multScalar( double );
+        Matrix<Type> sumScalar( double );
+        Matrix<Type> oneMinus();
+        Matrix<Type> logaritmo();
 
-        Matrix<Type> multScalar( Type );
         Matrix<Type> transpose();
         Matrix<Type> operator+( Matrix & );
         Matrix<Type> operator-( const Matrix & );
@@ -285,6 +289,14 @@ Matrix<Type> Matrix<Type>::operator%( const Matrix &A ) {
 }
 
 template < typename Type >
+Matrix<Type> Matrix<Type>::logaritmo() {
+    for( int i = 0; i < row; ++i )
+        for( int j = 0; j < col; ++j )
+            *( *( matrix + i ) + j ) = log( *( *( matrix + i ) + j ));
+    return *this;
+}
+
+template < typename Type >
 Matrix<Type> Matrix<Type>::operator=( const Matrix &M ) {
     this -> ~Matrix();
        
@@ -332,13 +344,28 @@ Matrix<Type> Matrix<Type>::sumMatrixThread( Matrix &M1, Matrix &M2 ) {
 }
 
 template<typename Type>
-Matrix<Type> Matrix<Type>::multScalar( Type scalar ) {
+Matrix<Type> Matrix<Type>::multScalar( double scalar ) {
     for( int i = 0; i < row; i++ ) 
         for( int j = 0; j < col; j++ )
             *( *( matrix + i ) + j ) = *( *( matrix + i ) + j ) * scalar;
     return *this;
 }
 
+template<typename Type>
+Matrix<Type> Matrix<Type>::sumScalar( double scalar ) {
+    for( int i = 0; i < row; i++ ) 
+        for( int j = 0; j < col; j++ )
+            *( *( matrix + i ) + j ) = *( *( matrix + i ) + j ) + scalar;
+    return *this;
+}
+
+template<typename Type>
+Matrix<Type> Matrix<Type>::oneMinus() {
+    for( int i = 0; i < row; i++ ) 
+        for( int j = 0; j < col; j++ )
+            *( *( matrix + i ) + j ) = 1 - *( *( matrix + i ) + j );
+    return *this;
+}
 
 template < typename Type >
 ostream& operator <<( ostream &o, const Matrix <Type> M ) {

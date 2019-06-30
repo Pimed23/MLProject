@@ -20,4 +20,5 @@ int main() {
     hyp = feedForward( X, Theta1, Theta2 );
     costFunction( hyp, y, outputLayer );
 
+
 }

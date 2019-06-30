@@ -3,6 +3,7 @@
 
 #include "Matrix.h"
 #include <math.h>
+#include <tgmath.h> 
 #include <cstdlib>
 
 void sigmoidFunction( Matrix<double> &M ) {
@@ -48,10 +49,17 @@ double costFunction( Matrix<double> hyp, Matrix<double> y, int outputLayer ) {
     for( int i = 0; i < yVec.getRow(); ++i ) {
         int j = y[ i ][ 0 ];
         if( j != 10 )
-            yVec[ i ][ j ] = 1;
+            yVec[ i ][ j - 1 ] = 1;
         else
-            yVec[ i ][ 0 ] = 1;
+            yVec[ i ][ 9 ] = 1;
     }
+
+    Matrix<double> J;
+    Matrix<double> Jright;
+    Matrix<double> Jleft;
+    Jleft = ( yVec.multScalar( -1 ) % hyp.logaritmo()); 
+    Jright = ( yVec.oneMinus() % hyp.oneMinus().logaritmo());
+    cout << Jright[ 0 ][ 0 ]  << endl;
 }
 
 
