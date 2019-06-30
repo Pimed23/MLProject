@@ -70,11 +70,12 @@ double costFunction( Matrix<double> hyp, Matrix<double> y, int outputLayer ) {
             yVec[ i ][ 9 ] = 1;
     }
 
-    Matrix<double> J;
+    Matrix<double> cost;
     Matrix<double> oneMHyp;
     oneMHyp = oneMinus( hyp );
-    J =  yVec.multScalar( -1 ) % logaritmo( hyp ) - oneMinus( yVec ) % logaritmo( oneMHyp );
-    cout << J[ 0 ][ 0 ] << endl;
+    cost =  yVec.multScalar( -1 ) % logaritmo( hyp ) - oneMinus( yVec ) % logaritmo( oneMHyp );
+    double J = cost.addAll() / 5000;
+    return J; 
 }
 
 

@@ -24,6 +24,7 @@ class Matrix {
         Matrix<Type> addOnes();
         int getRow();
         int getCol();
+        double addAll();
 
         Matrix<Type> multScalar( double );
         Matrix<Type> sumScalar( double );
@@ -345,8 +346,17 @@ template<typename Type>
 Matrix<Type> Matrix<Type>::sumScalar( double scalar ) {
     for( int i = 0; i < row; i++ ) 
         for( int j = 0; j < col; j++ )
-            *( *( matrix + i ) + j ) = *( *( matrix + i ) + j ) + scalar;
+            *(*( matrix + i ) + j ) = *(*( matrix + i ) + j ) + scalar;
     return *this;
+}
+
+template < typename Type >
+double Matrix<Type>::addAll() {
+    double acc = 0;
+    for( int i = 0; i < row; ++i )
+        for( int j = 0; j < col; ++j )
+            acc += *(*( matrix + i ) + j );
+    return acc;
 }
 
 template < typename Type >
