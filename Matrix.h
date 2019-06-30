@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <thread>
 using namespace std;
 
 template < typename Type >
@@ -18,6 +19,8 @@ class Matrix {
         void fillMatrix();
         void fillRandom();
         void fillArchive( string );
+        void ones();
+        Matrix<Type> addOnes();
         int getRow();
         int getCol();
 
@@ -165,6 +168,23 @@ void Matrix<Type>::fillArchive( string name ) {
 
     *this = M;
     archive.close();
+}
+
+template < typename Type >
+void Matrix<Type>::ones() {
+    for( int i = 0; i < row; ++i )
+        for( int j = 0; j < col; ++j )
+            *( *( matrix + i ) + j ) = 1;
+}
+
+template < typename Type >
+Matrix<Type> Matrix<Type>::addOnes() {
+    Matrix<Type> M( row, col + 1 );
+    M.ones();
+    for( int i = 0; i < row; ++i )
+        for( int j = 0; j < col; ++j )
+            *( *( M.matrix + i ) + j + 1 ) = *( *( matrix + i ) + j );
+    return M;
 }
 
 template < typename Type >
