@@ -27,8 +27,6 @@ class Matrix {
 
         Matrix<Type> multScalar( double );
         Matrix<Type> sumScalar( double );
-        Matrix<Type> oneMinus();
-        Matrix<Type> logaritmo();
 
         Matrix<Type> transpose();
         Matrix<Type> operator+( Matrix & );
@@ -289,14 +287,6 @@ Matrix<Type> Matrix<Type>::operator%( const Matrix &A ) {
 }
 
 template < typename Type >
-Matrix<Type> Matrix<Type>::logaritmo() {
-    for( int i = 0; i < row; ++i )
-        for( int j = 0; j < col; ++j )
-            *( *( matrix + i ) + j ) = log( *( *( matrix + i ) + j ));
-    return *this;
-}
-
-template < typename Type >
 Matrix<Type> Matrix<Type>::operator=( const Matrix &M ) {
     this -> ~Matrix();
        
@@ -356,14 +346,6 @@ Matrix<Type> Matrix<Type>::sumScalar( double scalar ) {
     for( int i = 0; i < row; i++ ) 
         for( int j = 0; j < col; j++ )
             *( *( matrix + i ) + j ) = *( *( matrix + i ) + j ) + scalar;
-    return *this;
-}
-
-template<typename Type>
-Matrix<Type> Matrix<Type>::oneMinus() {
-    for( int i = 0; i < row; i++ ) 
-        for( int j = 0; j < col; j++ )
-            *( *( matrix + i ) + j ) = 1 - *( *( matrix + i ) + j );
     return *this;
 }
 

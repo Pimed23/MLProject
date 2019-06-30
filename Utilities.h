@@ -12,6 +12,22 @@ void sigmoidFunction( Matrix<double> &M ) {
             M[ i ][ j ] = 1.0 / ( 1.0 + exp( -1 * M[ i ][ j ]));
 }
 
+Matrix<double> logaritmo( Matrix<double> M ) {
+    Matrix<double> N( M.getRow(), M.getCol());
+    for( int i = 0; i < M.getRow(); ++i )
+        for( int j = 0; j < M.getCol(); ++j )
+            N[ i ][ j ] = log( M[ i ][ j ]);
+    return N;
+}
+
+Matrix<double> oneMinus( Matrix<double> M ) {
+    Matrix<double> N( M.getRow(), M.getCol());
+    for( int i = 0; i < M.getRow(); i++ ) 
+        for( int j = 0; j < M.getCol(); j++ )
+            N[ i ][ j ] = 1 - M[ i ][ j ];
+    return N;
+}
+
 Matrix<double> randInitializeWeights( int L_in, int L_out) {
     Matrix<double> M( L_out, L_in + 1 );
     double epsInit = 0.12;
@@ -55,11 +71,10 @@ double costFunction( Matrix<double> hyp, Matrix<double> y, int outputLayer ) {
     }
 
     Matrix<double> J;
-    Matrix<double> Jright;
-    Matrix<double> Jleft;
-    Jleft = ( yVec.multScalar( -1 ) % hyp.logaritmo()); 
-    Jright = ( yVec.oneMinus() % hyp.oneMinus().logaritmo());
-    cout << Jright[ 0 ][ 0 ]  << endl;
+    Matrix<double> oneMHyp;
+    oneMHyp = oneMinus( hyp );
+    J =  yVec.multScalar( -1 ) % logaritmo( hyp ) - oneMinus( yVec ) % logaritmo( oneMHyp );
+    cout << J[ 0 ][ 0 ] << endl;
 }
 
 
