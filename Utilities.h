@@ -96,7 +96,7 @@ double costFunction( Matrix<double> hyp, Matrix<double> y, Matrix<double> Theta1
     return J; 
 }
 
-void backPropagation( Matrix<double> X, Matrix<double> y, Matrix<double> Theta1, Matrix<double> Theta2 ) {
+void backPropagation( Matrix<double> X, Matrix<double> y, Matrix<double> Theta1, Matrix<double> Theta2, double lambda ) {
     
     int m = X.getRow();
     int inputLayer = 400;
@@ -118,7 +118,7 @@ void backPropagation( Matrix<double> X, Matrix<double> y, Matrix<double> Theta1,
     Matrix<double> Theta1Grad( Theta1.getRow(), Theta1.getCol());
     Matrix<double> Theta2Grad( Theta2.getRow(), Theta2.getCol());
        
-    for( int i = 0; i < 1; ++i ) {
+    for( int i = 0; i < m; ++i ) {
         Matrix<double> a1( inputLayer + 1, 1 );
         a1 = XPrep.columna( i );
         
@@ -148,10 +148,14 @@ void backPropagation( Matrix<double> X, Matrix<double> y, Matrix<double> Theta1,
         Matrix<double> delta2;
         delta2 = ( Theta2.transpose() * delta3 ) % z2SigGrad.addOnesCol();
         delta2 = delta2.cutOnesCol();
-        
-        Theta1Grad = Theta1Grad - ( delta2 * a1.transpose());
-        
+            
+        Theta1Grad = Theta1Grad + ( delta2 * a1.transpose());
+        Theta2Grad = Theta2Grad + ( delta3 * a2.transpose()); 
     }
+
+    Theta1Grad = Theta1Grad.multScalar( 1.0 / m ) + Theta1.cutOnes().addZeros().multScalar( lambda / m );
+    Theta2Grad = Theta2Grad.multScalar( 1.0 / m ) + Theta2.cutOnes().addZeros().multScalar( lambda / m );
+
 }
 
 #endif

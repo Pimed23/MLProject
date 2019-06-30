@@ -29,15 +29,15 @@ class Matrix {
         Matrix<Type> columna( int i );
         Matrix<Type> addOnes();
         Matrix<Type> addOnesCol();
+        Matrix<Type> addZeros();
         Matrix<Type> cutOnes();
         Matrix<Type> cutOnesCol();
         Matrix<Type> multScalar( double );
         Matrix<Type> sumScalar( double );
         Matrix<Type> powTwice();
-        Matrix<Type> sumMatrixThread( Matrix &, Matrix & );
 
         Matrix<Type> transpose();
-        Matrix<Type> operator+( Matrix & );
+        Matrix<Type> operator+( const Matrix & );
         Matrix<Type> operator-( const Matrix & );
         Matrix<Type> operator*( const Matrix & );
         Matrix<Type> operator=( const Matrix & );
@@ -54,7 +54,7 @@ class Matrix {
     private:
         int row, col;
         Type **matrix;
-        
+        Matrix<Type> sumMatrixThread( const Matrix &, const Matrix & );
         
     friend class Sumatoria;
 
@@ -63,7 +63,7 @@ class Matrix {
 class Sumatoria : public Matrix<double> {
     
     public:
-        void operator()( Matrix<double> &A, Matrix<double> &B, Matrix<double> *ptr, int bRow, int eRow ) {  
+        void operator()( const Matrix<double> &A, const Matrix<double> &B, const Matrix<double> *ptr, int bRow, int eRow ) {  
             int pos = 0; 
             for( int i = bRow; i < eRow; ++i ) {
                 for( int j = 0; j < A.col; ++j ) {
@@ -197,6 +197,16 @@ Matrix<Type> Matrix<Type>::columna( int ind ) {
 }
 
 template < typename Type >
+Matrix<Type> Matrix<Type>::addZeros() {
+    Matrix<Type> M( row, col + 1 );
+    for( int i = 0; i < row; ++i )
+        for( int j = 0; j < col; ++j )
+            *( *( M.matrix + i ) + j + 1 ) = *( *( matrix + i ) + j );
+    return M;
+}
+
+
+template < typename Type >
 Matrix<Type> Matrix<Type>::addOnes() {
     Matrix<Type> M( row, col + 1 );
     M.ones();
@@ -256,14 +266,18 @@ Matrix<Type> Matrix<Type>::transpose() {
 
 
 template < typename Type >
-Matrix<Type> Matrix<Type>::operator+( Matrix &A ) {
-    if( row == A.row && col == A.col )
-        return sumMatrixThread( *this, A );
-    else {
-        Matrix<Type> R( row, col );
-        cout << "No se pueden sumar..." << endl;
-        return R;
+Matrix<Type> Matrix<Type>::operator+( const Matrix &A ) {
+    Matrix<Type> B( row, col );
+    if( row == A.row && col == A.col ) {
+        for( int i = 0; i < row; ++i )
+            for( int j = 0; j < col; ++j )
+                *(*( B.matrix + i ) + j ) = *(*( matrix + i ) + j ) + *(*( A.matrix + i ) + j );
     }
+
+    else
+        cout << "No se pueden sumar..." << endl;
+    
+    return B;
 }
 
 template < typename Type >
@@ -351,7 +365,7 @@ Matrix<Type> Matrix<Type>::operator=( const Matrix &M ) {
 }
 
 template < typename Type>
-Matrix<Type> Matrix<Type>::sumMatrixThread( Matrix &M1, Matrix &M2 ) {
+Matrix<Type> Matrix<Type>::sumMatrixThread( const Matrix &M1, const Matrix &M2 ) {
     int nThreads = 2;
     int tRow = M1.getRow() / nThreads;    
     Matrix<Type> R1( tRow, M1.getCol());
