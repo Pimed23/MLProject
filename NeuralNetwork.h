@@ -71,4 +71,6 @@ void NeuralNetwork::feedForwardPropagation(int index){
     layer[2].getUnits_a() = hyp;
     cout<<layer[2].getUnits_a()<<endl; //Hipotesis en forma de vector horizontal
 }
+
+
 #endif

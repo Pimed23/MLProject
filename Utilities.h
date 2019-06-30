@@ -28,6 +28,12 @@ Matrix<double> oneMinus( Matrix<double> M ) {
     return N;
 }
 
+Matrix<double> sigmoidGradient( Matrix<double> &M ) {
+    Matrix<double> N( M.getRow(), M.getCol());
+    N = M % oneMinus( M );
+    return N;
+}
+
 Matrix<double> randInitializeWeights( int L_in, int L_out) {
     Matrix<double> M( L_out, L_in + 1 );
     double epsInit = 0.12;
@@ -50,7 +56,7 @@ Matrix<double> feedForward( Matrix<double> X, Matrix<double> Theta1, Matrix<doub
     sigmoidFunction( z2 );
     a2 = z2.addOnes();
 
-    Matrix<double> z3( a2.getRow(), Theta2.getCol());
+    Matrix<double> z3( a2.getRow(), Theta2.getRow());
     z3 = a2 * Theta2.transpose();
 
     Matrix<double> hyp( z3.getRow(), z3.getCol());
@@ -90,6 +96,63 @@ double costFunction( Matrix<double> hyp, Matrix<double> y, Matrix<double> Theta1
     return J; 
 }
 
+void backPropagation( Matrix<double> X, Matrix<double> y, Matrix<double> Theta1, Matrix<double> Theta2 ) {
+    
+    int m = X.getRow();
+    int inputLayer = 400;
+    int hiddenLayer = 25;
+    int outputLayer = 10;
+
+    Matrix<double> yVec( m, outputLayer );
+    for( int i = 0; i < m; ++i ) {
+        int j = y[ i ][ 0 ];
+        if( j != 10 )
+            yVec[ i ][ j - 1 ] = 1;
+        else
+            yVec[ i ][ 9 ] = 1;
+    }
+    
+    Matrix<double> XPrep;
+    XPrep = X.addOnes().transpose();
+
+    Matrix<double> Theta1Grad( Theta1.getRow(), Theta1.getCol());
+    Matrix<double> Theta2Grad( Theta2.getRow(), Theta2.getCol());
+       
+    for( int i = 0; i < 1; ++i ) {
+        Matrix<double> a1( inputLayer + 1, 1 );
+        a1 = XPrep.columna( i );
+        
+        Matrix<double> z2( hiddenLayer, inputLayer + 1 );
+        z2 = Theta1 * a1;
+
+        Matrix<double> a2( hiddenLayer + 1, z2.getCol());
+        sigmoidFunction( z2 );
+        a2 = z2.addOnesCol();
+
+        Matrix<double> z3( outputLayer, 1 );
+        z3 = Theta2 * a2;
+
+        Matrix<double> a3( z3.getCol(), z3.getRow());
+        sigmoidFunction( z3 );
+        a3 = z3;
+
+        Matrix<double> yy;
+        yy = yVec.transpose().columna( i );
+
+        Matrix<double> delta3;
+        delta3 = a3 - yy;
+
+        Matrix<double> z2SigGrad;
+        z2SigGrad = sigmoidGradient( z2 );
+
+        Matrix<double> delta2;
+        delta2 = ( Theta2.transpose() * delta3 ) % z2SigGrad.addOnesCol();
+        delta2 = delta2.cutOnesCol();
+        
+        Theta1Grad = Theta1Grad - ( delta2 * a1.transpose());
+        
+    }
+}
 
 #endif
 

@@ -26,11 +26,15 @@ class Matrix {
         int getCol();
         double addAll();
         
+        Matrix<Type> columna( int i );
         Matrix<Type> addOnes();
+        Matrix<Type> addOnesCol();
         Matrix<Type> cutOnes();
+        Matrix<Type> cutOnesCol();
         Matrix<Type> multScalar( double );
         Matrix<Type> sumScalar( double );
         Matrix<Type> powTwice();
+        Matrix<Type> sumMatrixThread( Matrix &, Matrix & );
 
         Matrix<Type> transpose();
         Matrix<Type> operator+( Matrix & );
@@ -50,7 +54,7 @@ class Matrix {
     private:
         int row, col;
         Type **matrix;
-        Matrix<Type> sumMatrixThread( Matrix &, Matrix & );
+        
         
     friend class Sumatoria;
 
@@ -59,7 +63,7 @@ class Matrix {
 class Sumatoria : public Matrix<double> {
     
     public:
-        void operator()( const Matrix<double> &A, const Matrix<double> &B, const Matrix<double> *ptr, int bRow, int eRow ) {  
+        void operator()( Matrix<double> &A, Matrix<double> &B, Matrix<double> *ptr, int bRow, int eRow ) {  
             int pos = 0; 
             for( int i = bRow; i < eRow; ++i ) {
                 for( int j = 0; j < A.col; ++j ) {
@@ -185,6 +189,14 @@ void Matrix<Type>::ones() {
 }
 
 template < typename Type >
+Matrix<Type> Matrix<Type>::columna( int ind ) {
+    Matrix<Type> M( row, 1 );
+    for( int i = 0; i < row; ++i )
+        *(*( M.matrix + i )) = *(*( matrix + i ) + ind );
+    return M;
+}
+
+template < typename Type >
 Matrix<Type> Matrix<Type>::addOnes() {
     Matrix<Type> M( row, col + 1 );
     M.ones();
@@ -195,11 +207,30 @@ Matrix<Type> Matrix<Type>::addOnes() {
 }
 
 template < typename Type >
+Matrix<Type> Matrix<Type>::addOnesCol() {
+    Matrix<Type> M( row + 1, col );
+    M.ones();
+    for( int i = 0; i < row; ++i )
+        for( int j = 0; j < col; ++j )
+            *(*( M.matrix + i + 1 ) + j ) = *(*( matrix + i ) + j );
+    return M;
+}
+
+template < typename Type >
 Matrix<Type> Matrix<Type>::cutOnes() {
     Matrix<Type> M( row, col - 1 );
     for( int i = 0; i < row; ++i )
         for( int j = col - 1; j != 0; --j )
             *( *( M.matrix + i ) + j - 1 ) = *( *( matrix + i ) + j );
+    return M;
+}
+
+template < typename Type >
+Matrix<Type> Matrix<Type>::cutOnesCol() {
+    Matrix<Type> M( row - 1, col );
+    for( int i = row - 1; i != 0; --i )
+        for( int j = 0; j < col; ++j )
+            *( *( M.matrix + i - 1 ) + j ) = *( *( matrix + i ) + j );
     return M;
 }
 

@@ -18,7 +18,9 @@ int main() {
     Theta2.fillArchive( "Theta2data.txt");
     Matrix<double> hyp;
     hyp = feedForward( X, Theta1, Theta2 );
-    cout << costFunction( hyp, y, Theta1, Theta2, outputLayer, 0 ) << endl;
+    // cout << hyp.getRow() << " " << hyp.getCol() << endl;
+    // cout << costFunction( hyp, y, Theta1, Theta2, outputLayer, 0 ) << endl;
+    backPropagation( X, y, Theta1, Theta2 );
 
 
 }
