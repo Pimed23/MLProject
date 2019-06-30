@@ -21,13 +21,16 @@ class Matrix {
         void fillRandom();
         void fillArchive( string );
         void ones();
-        Matrix<Type> addOnes();
+       
         int getRow();
         int getCol();
         double addAll();
-
+        
+        Matrix<Type> addOnes();
+        Matrix<Type> cutOnes();
         Matrix<Type> multScalar( double );
         Matrix<Type> sumScalar( double );
+        Matrix<Type> powTwice();
 
         Matrix<Type> transpose();
         Matrix<Type> operator+( Matrix & );
@@ -36,6 +39,8 @@ class Matrix {
         Matrix<Type> operator=( const Matrix & );
         Matrix<Type> operator/( const Matrix & );
         Matrix<Type> operator%( const Matrix & );
+        Matrix<Type> operator^( const double );
+
         Type* operator[]( const int i ) {  
             return *( matrix + i );
         }
@@ -191,6 +196,15 @@ Matrix<Type> Matrix<Type>::addOnes() {
 }
 
 template < typename Type >
+Matrix<Type> Matrix<Type>::cutOnes() {
+    Matrix<Type> M( row, col - 1 );
+    for( int i = 0; i < row; ++i )
+        for( int j = 0; j < col; ++j )
+            *( *( M.matrix + i ) + j ) = *( *( matrix + i ) + j + 1 );
+    return M;
+}
+
+template < typename Type >
 int Matrix<Type>::getRow() {
     return row;
 }
@@ -342,13 +356,22 @@ Matrix<Type> Matrix<Type>::multScalar( double scalar ) {
     return *this;
 }
 
-template<typename Type>
+template< typename Type >
 Matrix<Type> Matrix<Type>::sumScalar( double scalar ) {
     for( int i = 0; i < row; i++ ) 
         for( int j = 0; j < col; j++ )
             *(*( matrix + i ) + j ) = *(*( matrix + i ) + j ) + scalar;
     return *this;
 }
+
+template< typename Type >
+Matrix<Type> Matrix<Type>::powTwice() {
+    for( int i = 0; i < row; ++i )
+        for( int j = 0; j < col; ++j )
+            *(*( matrix + i ) + j ) =  *(*( matrix + i ) + j ) *  *(*( matrix + i ) + j );
+    return *this;
+}
+
 
 template < typename Type >
 double Matrix<Type>::addAll() {

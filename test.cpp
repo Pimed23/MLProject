@@ -18,7 +18,7 @@ int main() {
     Theta2.fillArchive( "Theta2data.txt");
     Matrix<double> hyp;
     hyp = feedForward( X, Theta1, Theta2 );
-    costFunction( hyp, y, outputLayer );
+    cout << costFunction( hyp, y, Theta1, Theta2, outputLayer ) << endl;
 
 
 }

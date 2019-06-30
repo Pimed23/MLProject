@@ -60,7 +60,7 @@ Matrix<double> feedForward( Matrix<double> X, Matrix<double> Theta1, Matrix<doub
     return hyp;    
 }
 
-double costFunction( Matrix<double> hyp, Matrix<double> y, int outputLayer ) {
+double costFunction( Matrix<double> hyp, Matrix<double> y, Matrix<double> Theta1, Matrix<double> Theta2, int outputLayer ) {
     Matrix<double> yVec( y.getRow(), outputLayer );
     for( int i = 0; i < yVec.getRow(); ++i ) {
         int j = y[ i ][ 0 ];
@@ -75,10 +75,19 @@ double costFunction( Matrix<double> hyp, Matrix<double> y, int outputLayer ) {
     oneMHyp = oneMinus( hyp );
     cost =  yVec.multScalar( -1 ) % logaritmo( hyp ) - oneMinus( yVec ) % logaritmo( oneMHyp );
     double J = cost.addAll() / 5000;
+
+    Matrix<double> t1;
+    t1 = Theta1.cutOnes();
+    Matrix<double> t2;
+    t2 = Theta2.cutOnes();
+    Matrix<double> mult; 
+    t1.powTwice();
+
+
+
+
     return J; 
 }
-
-
 
 
 #endif
