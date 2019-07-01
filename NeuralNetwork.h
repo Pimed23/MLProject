@@ -25,7 +25,7 @@ class NeuralNetwork{
 		double costFunction();
 		void backPropagation();
 		void gradientDescent(double alpha);
-		int prediction(Matrix<double> predict);
+		void prediction(Matrix<double>& predict);
 };
 
 NeuralNetwork::NeuralNetwork(){
@@ -200,7 +200,7 @@ void NeuralNetwork::backPropagation(){
 }
 
 void NeuralNetwork::gradientDescent(double alpha){
-	for(int i=0;i < 500; i++){
+	for(int i=0;i < 100; i++){
 		backPropagation();
 		cout<<"Iteracion "<<i+1<<endl;
 		layer[0].setWeights(layer[0].getWeights() - (layer[0].getPartialDerivatives()).multDouble(alpha));
@@ -209,8 +209,22 @@ void NeuralNetwork::gradientDescent(double alpha){
 	}
 }
 
-int NeuralNetwork::prediction(Matrix<double> predict){
-	
+void NeuralNetwork::prediction(Matrix<double>& predict){
+	(this->trainingSet)=predict;
+	feedForwardPropagation();
+	double max = 0.0;
+	int ind=0;
+	for(int i=0;i<10;i++){
+		if(layer[2].getUnits_a()[0][i] > max){
+			max=layer[2].getUnits_a()[0][i];
+			ind = i;
+		}
+	}
+	cout<<"Probabilidad: "<<layer[2].getUnits_a()[0][ind]<<endl;
+	if(ind == 9){
+		cout<<"Prediccion: "<<0<<endl;return;
+	}
+	cout<<"Prediccion: "<<ind+1<<endl;
 }
 
 
