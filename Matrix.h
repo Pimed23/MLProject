@@ -35,44 +35,33 @@ class Matrix {
         Matrix<Type> multScalar( double );
         Matrix<Type> sumScalar( double );
         Matrix<Type> powTwice();
+        Matrix<Type> sumMatrixThread( Matrix &, Matrix & );
         Matrix<Type> multDouble( double );
-
         Matrix<Type> transpose();
-        Matrix<Type> operator+( const Matrix & );
+        
         Matrix<Type> operator-( const Matrix & );
         Matrix<Type> operator*( const Matrix & );
         Matrix<Type> operator=( const Matrix & );
         Matrix<Type> operator/( const Matrix & );
         Matrix<Type> operator%( const Matrix & );
+        Matrix<Type> operator+( const Matrix & );
 
         Type* operator[]( const int i ) {  
             return *( matrix + i );
         }
 
         template < typename T >
+        friend Matrix<T> operator+( Matrix &, Matrix & );
+        template < typename T >
         friend ostream& operator <<( ostream &, const Matrix <T> );
  
     private:
         int row, col;
         Type **matrix;
-        Matrix<Type> sumMatrixThread( const Matrix &, const Matrix & );
+        
         
     friend class Sumatoria;
 
-};
-
-class Sumatoria : public Matrix<double> {
-    
-    public:
-        void operator()( const Matrix<double> &A, const Matrix<double> &B, const Matrix<double> *ptr, int bRow, int eRow ) {  
-            int pos = 0; 
-            for( int i = bRow; i < eRow; ++i ) {
-                for( int j = 0; j < A.col; ++j ) {
-                    *(*( ptr -> matrix + pos ) + j ) = *(*( A.matrix + i ) + j ) + *(*( B.matrix + i ) + j );
-                }
-                ++pos;
-            }
-        }
 };
 
 template < typename Type >
@@ -267,8 +256,21 @@ Matrix<Type> Matrix<Type>::transpose() {
 
 
 template < typename Type >
+Matrix<Type> operator+( Matrix<Type> &A, Matrix<Type> &B ) {
+    Matrix<Type> C( A.getRow(), A.getCol());
+    if( A.getRow() == B.getRow() && A.getCol() == B.getCol()) {
+        C = C.sumMatrixThread( A, B );
+    }
+    else
+        cout << "No se pueden sumar..." << endl;
+    
+    return C;
+}
+
+template < typename Type >
 Matrix<Type> Matrix<Type>::operator+( const Matrix &A ) {
     Matrix<Type> B( row, col );
+
     if( row == A.row && col == A.col ) {
         for( int i = 0; i < row; ++i )
             for( int j = 0; j < col; ++j )
@@ -365,32 +367,47 @@ Matrix<Type> Matrix<Type>::operator=( const Matrix &M ) {
     return *this;
 }
 
+void accumulator_function2( Matrix<int> &a, Matrix<int> &b, Matrix<int> &r, unsigned long long &acm, 
+                            unsigned int beginIndex, unsigned int endIndex)
+{
+    int p = 0;
+    for (int i = beginIndex; i < endIndex; ++i) {
+    {
+        for( int j = 0; j < a.getCol(); ++j )
+            r[ p ][ j ] = a[ i ][ j ] + b[ i ][ j ];
+        }
+        ++p;
+    }
+}
+
 template < typename Type>
-Matrix<Type> Matrix<Type>::sumMatrixThread( const Matrix &M1, const Matrix &M2 ) {
+Matrix<Type> Matrix<Type>::sumMatrixThread( Matrix &a, Matrix &b ) {
     int nThreads = 2;
-    int tRow = M1.getRow() / nThreads;    
-    Matrix<Type> R1( tRow, M1.getCol());
-    Matrix<Type> *r1Ptr = &R1;
-    Matrix<Type> R2( tRow, M1.getCol());
-    Matrix<Type> *r2Ptr = &R2;
-    Matrix<Type> R( M1.getRow(), M1.getRow());
-    Sumatoria S1 = Sumatoria();
-    std::thread t1( S1, M1, M2, r1Ptr, 0, tRow );
-    std::thread t2( S1, M1, M2, r2Ptr, tRow , M1.getRow());
+    int tRow = a.getRow() / nThreads;
+
+    Matrix<int> ac1( tRow, a.getCol());
+    Matrix<int> ac2( tRow, a.getCol());
+    unsigned long long acm1 = 5;
+    unsigned long long acm2 = 4;
+    std::thread t1(accumulator_function2, std::ref(a), std::ref(b), std::ref(ac1), std::ref(acm1), 0, a.getRow() / 2);
+    std::thread t2(accumulator_function2, std::ref(a), std::ref(b), std::ref(ac2), std::ref(acm2), a.getRow() / 2, a.getRow());
+
     t1.join();
     t2.join();
     
-    for( int i = 0; i < R1.row; ++i )
-        for( int j = 0; j < R1.col; ++j )
-            *( *( R.matrix + i ) + j ) = *( *( R1.matrix + i ) + j );
+    Matrix<int> R( a.getRow(), b.getCol());
+    for( int i = 0; i < ac1.getRow(); ++i )
+        for( int j = 0; j < ac1.getCol(); ++j )
+            *( *( R.matrix + i ) + j ) = *( *( ac1.matrix + i ) + j );
     int pos = 0;
-    for( int i = tRow; i < M1.getRow(); ++i ) {
-        for( int j = 0; j < R2.col; ++j )
-            *( *( R.matrix + i ) + j ) = *( *( R2.matrix + pos ) + j );
+    
+    for( int i = tRow; i < a.getRow(); ++i ) {
+        for( int j = 0; j < ac2.getCol(); ++j ) {
+            *( *( R.matrix + i ) + j ) = *( *( ac2.matrix + pos ) + j );
+        }
         ++pos;
     }
     return R;
-    
 }
 
 template<typename Type>
