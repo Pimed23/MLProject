@@ -30,13 +30,13 @@ int main() {
 	t2.fillArchive("Theta2data.txt");
 	
     NeuralNetwork a(3,n,X,y,1.0);
-   //a.setWeightsByLayer(0,t1);
-   //a.setWeightsByLayer(1,t2);
+    a.setWeightsByLayer(0,t1);
+    a.setWeightsByLayer(1,t2);
     
-    //Matrix<double> test(1,400);
-    //test.fillArchive("numx.txt");
-    a.gradientDescent(0.5);
-    cout<<a.feedForwardPropagation();
-    //a.prediction(test);
+    Matrix<double> test(1,400);
+    test.fillArchive("numx.txt");
+    //a.gradientDescent(0.5);
+    //cout<<a.feedForwardPropagation();
+    a.prediction(test);
     return 0;
 }
