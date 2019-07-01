@@ -25,6 +25,7 @@ class NeuralNetwork{
 		double costFunction();
 		void backPropagation();
 		void gradientDescent(double alpha);
+		int prediction(Matrix<double> predict);
 };
 
 NeuralNetwork::NeuralNetwork(){
@@ -46,7 +47,13 @@ NeuralNetwork::NeuralNetwork(int noLayers, vector<int>& unitsPerLayer, const Mat
 		aux1 = randInitializeWeights(unitsPerLayer[i],unitsPerLayer[i+1]);
 		layer[i].setWeights(aux1);
 	}
-	layer[i].setNoUnits(unitsPerLayer[i]);
+	layer[i].setNoUnits(unitsPerLayer[i]);	
+	Matrix<double> a1(this->trainingSet.getRow(),unitsPerLayer[0]);
+	layer[0].setUnits_a(a1);
+	Matrix<double> a2(this->trainingSet.getRow(),unitsPerLayer[1]);
+	layer[1].setUnits_a(a2);
+	Matrix<double> a3(this->trainingSet.getRow(),unitsPerLayer[2]);
+	layer[2].setUnits_a(a3);
 }
 
 NeuralNetwork::~NeuralNetwork(){
@@ -133,27 +140,38 @@ void NeuralNetwork::backPropagation(){
     }
     
     Matrix<double> XPrep;
-    XPrep = (this->trainingSet).addOnes().transpose();
+    XPrep = (this->trainingSet).addOnes().transpose(); // 401 x 5000
 
     Matrix<double> Theta1Grad( (layer[0].getWeights()).getRow(), (layer[0].getWeights()).getCol());
     Matrix<double> Theta2Grad( (layer[1].getWeights()).getRow(), (layer[1].getWeights()).getCol());
        
     for( int i = 0; i < m; ++i ) {
-        Matrix<double> a1( inputLayer + 1, 1 );
-        a1 = XPrep.columna( i );
+        Matrix<double> a1;
+        a1 = XPrep.columna( i ); // 401 x 1
+        for(int j=1;j<inputLayer+1;j++){
+        	layer[0].getUnits_a()[i][j-1] = a1[j][0];
+        }
         
-        Matrix<double> z2( hiddenLayer, inputLayer + 1 );
-        z2 = (layer[0].getWeights()) * a1;
+        Matrix<double> z2;
+        z2 = (layer[0].getWeights()) * a1; // 25 x 1
 
-        Matrix<double> a2( hiddenLayer + 1, z2.getCol());
+        Matrix<double> a2;
         sigmoidFunction( z2 );
-        a2 = z2.addOnesCol();
+        for(int j=0;j<hiddenLayer;j++){
+        	layer[1].getUnits_a()[i][j] = z2[j][0];
+        }
+        a2 = z2.addOnesCol(); // 26 x 1 agrega 1 fila de unos arriba
 
-        Matrix<double> z3( outputLayer, 1 );
-        z3 = (layer[1].getWeights()) * a2;
+        Matrix<double> z3; 
+        z3 = (layer[1].getWeights()) * a2; // 10 x 1 
+        
 
-        Matrix<double> a3( z3.getCol(), z3.getRow());
+        Matrix<double> a3;
         sigmoidFunction( z3 );
+        
+        for(int j=0;j<outputLayer;j++){
+        	layer[2].getUnits_a()[i][j] = z3[j][0];
+        }
         a3 = z3;
 
         Matrix<double> yy;
@@ -184,13 +202,16 @@ void NeuralNetwork::backPropagation(){
 void NeuralNetwork::gradientDescent(double alpha){
 	for(int i=0;i < 500; i++){
 		backPropagation();
-		layer[0].setUnits_a(layer[0].getUnits_a() - (layer[0].getPartialDerivatives()).multDouble(alpha));
-		layer[1].setUnits_a(layer[1].getUnits_a() - (layer[1].getPartialDerivatives()).multDouble(alpha));
-		cout<<"Iteracion "<<i<<endl;
+		cout<<"Iteracion "<<i+1<<endl;
+		layer[0].setWeights(layer[0].getWeights() - (layer[0].getPartialDerivatives()).multDouble(alpha));
+		layer[1].setWeights(layer[1].getWeights() - (layer[1].getPartialDerivatives()).multDouble(alpha));
+		cout<<"Funcion de costo: "<<costFunction()<<endl;
 	}
 }
 
-
+int NeuralNetwork::prediction(Matrix<double> predict){
+	
+}
 
 
 

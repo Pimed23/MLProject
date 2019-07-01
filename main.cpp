@@ -29,12 +29,11 @@ int main() {
     Matrix<double> t2(10,26);
 	t2.fillArchive("Theta2data.txt");
 	
-    NeuralNetwork a(3,n,X,y,1.0);
+    NeuralNetwork a(3,n,X,y,5.0);
   //a.setWeightsByLayer(0,t1);
   //a.setWeightsByLayer(1,t2);
     
-    //a.backPropagation();
-    a.gradientDescent(0.2);
-    
+  a.gradientDescent(0.2);
+    cout<<a.feedForwardPropagation();
     return 0;
 }
