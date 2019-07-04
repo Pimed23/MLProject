@@ -7,6 +7,7 @@
 
 using namespace std;
 
+
 int main() {
 
     int inputLayer = 400;
@@ -29,14 +30,17 @@ int main() {
     Matrix<double> t2(10,26);
 	t2.fillArchive("Theta2data.txt");
 	
-    NeuralNetwork a(3,n,X,y,1.0);
-    a.setWeightsByLayer(0,t1);
-    a.setWeightsByLayer(1,t2);
+    NeuralNetwork* a;
+    a = a->getInstance(3,n,X,y,1.0);
+    a->setWeightsByLayer(0,t1);
+    a->setWeightsByLayer(1,t2);
     
     Matrix<double> test(1,400);
-    test.fillArchive("numx.txt");
+    test.fillArchive("num1.txt");
     //a.gradientDescent(0.5);
-    //cout<<a.feedForwardPropagation();
-    a.prediction(test);
+    a->prediction(test);
+    
+    
+    a->deleteNeuralNetwork();
     return 0;
 }

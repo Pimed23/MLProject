@@ -9,14 +9,17 @@ using namespace std;
 
 class NeuralNetwork{
 	private:
+		static NeuralNetwork* instance;
 		Matrix<double> trainingSet;//X
 		Matrix<double> trainingLabels;//Y
 		int noLayers;
 		double lambda; //Regularize constant
 		Layer* layer;
-	public:
-		NeuralNetwork();
 		NeuralNetwork(int noLayers, vector<int>& unitsPerLayer, const Matrix<double>& trainingSet, const Matrix<double>& trainingLabels, 						 double lamda);
+	public:
+		static int noNeuralNetwork;
+		NeuralNetwork* getInstance(int noLayers, vector<int>& unitsPerLayer, const Matrix<double>& trainingSet, const Matrix<double>& trainingLabels, double lambda);
+		NeuralNetwork* getInstance();
 		~NeuralNetwork();
 		double getLambda();
 		void setLambda(double lambda);
@@ -26,12 +29,24 @@ class NeuralNetwork{
 		void backPropagation();
 		void gradientDescent(double alpha);
 		void prediction(Matrix<double>& predict);
+		void deleteNeuralNetwork();
 };
 
-NeuralNetwork::NeuralNetwork(){
-	this->noLayers=0;
-	layer = new Layer[0];
+int NeuralNetwork::noNeuralNetwork = 0;
+NeuralNetwork* NeuralNetwork::instance = NULL;
+
+NeuralNetwork* NeuralNetwork::getInstance(int noLayers, vector<int>& unitsPerLayer, const Matrix<double>& trainingSet, const Matrix<double>& trainingLabels, 						 double lambda){
+	if(noNeuralNetwork==0){
+		instance = new NeuralNetwork(noLayers,unitsPerLayer,trainingSet,trainingLabels,lambda);
+		noNeuralNetwork++;
+		return instance;
+	}
+	else{
+		noNeuralNetwork++;
+		return instance;
+	}
 }
+
 
 NeuralNetwork::NeuralNetwork(int noLayers, vector<int>& unitsPerLayer, const Matrix<double>& trainingSet, 
                              const Matrix<double>& trainingLabels, double lambda){
@@ -54,6 +69,25 @@ NeuralNetwork::NeuralNetwork(int noLayers, vector<int>& unitsPerLayer, const Mat
 	layer[1].setUnits_a(a2);
 	Matrix<double> a3(this->trainingSet.getRow(),unitsPerLayer[2]);
 	layer[2].setUnits_a(a3);
+}
+
+void NeuralNetwork::deleteNeuralNetwork(){
+	if(noNeuralNetwork>1){
+		noNeuralNetwork--;
+	}
+	else{
+		delete instance;
+		noNeuralNetwork--;
+	}
+}
+
+NeuralNetwork* NeuralNetwork::getInstance(){
+	if(noNeuralNetwork==0){
+		cout<<"Debe inicializar con parametros.\n";
+		return NULL;
+	}
+	noNeuralNetwork++;
+	return instance;
 }
 
 NeuralNetwork::~NeuralNetwork(){
@@ -210,6 +244,8 @@ void NeuralNetwork::gradientDescent(double alpha){
 }
 
 void NeuralNetwork::prediction(Matrix<double>& predict){
+	Matrix<double> aux;
+	aux=(this->trainingSet);
 	(this->trainingSet)=predict;
 	feedForwardPropagation();
 	double max = 0.0;
@@ -225,6 +261,7 @@ void NeuralNetwork::prediction(Matrix<double>& predict){
 		cout<<"Prediccion: "<<0<<endl;return;
 	}
 	cout<<"Prediccion: "<<ind+1<<endl;
+	this->trainingSet = aux;
 }
 
 
