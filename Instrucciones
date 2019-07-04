@@ -1,0 +1,19 @@
+Para ejecutar y probar nuestro programa se debe tener en cuenta las siguientes funciones:
+1) Debido al patrón de diseño singleton, las instancias de la NeuralNetwork se manejan con punteros, y al terminar de usar
+una instancia creada se debe usar el método "deleteNeuralNetwork".
+
+3) NeuralNetwork::gradientDescent(double alpha) recibe la constante alpha(learning rate para la gradiente descendente), y entrena
+a la red neuronal.
+
+2) NeuralNetwork::setWeights(Matrix<double>& matrix) sirve para cambiar los pesos (weights o thetas) de la red neuronal, son usados
+al momento de cargar nuestros pesos ya entrenados.
+
+4) NeuralNetwork::prediction(Matrix<double>& matrix) sirve para realizar una predicción, recibe un vector horizontal (1 x 400),
+que representa la matriz de una imagen de 20 x 20 pixeles en escala de grises.
+
+5) Si quiere cambiar la imágen a predecir por nuestra red neuronal, debe cambiar el nombre del archivo que carga la matriz "test".
+
+6) Finalmente para compilar y ejecutar el programa se deben introducir los siguientes comandos dentro de la terminal:
+ - make clean
+ - make
+ - ./main
