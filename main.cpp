@@ -36,11 +36,10 @@ int main() {
     a->setWeightsByLayer(1,t2);
     
     Matrix<double> test(1,400);
-    test.fillArchive("num1.txt");
+    test.fillArchive("num8.txt");
     //a.gradientDescent(0.5);
+    //cout<<a.feedForwardPropagation();
     a->prediction(test);
-    
-    
     a->deleteNeuralNetwork();
     return 0;
 }

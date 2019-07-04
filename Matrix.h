@@ -268,22 +268,6 @@ Matrix<Type> operator+( Matrix<Type> &A, Matrix<Type> &B ) {
 }
 
 template < typename Type >
-Matrix<Type> Matrix<Type>::operator+( const Matrix &A ) {
-    Matrix<Type> B( row, col );
-
-    if( row == A.row && col == A.col ) {
-        for( int i = 0; i < row; ++i )
-            for( int j = 0; j < col; ++j )
-                *(*( B.matrix + i ) + j ) = *(*( matrix + i ) + j ) + *(*( A.matrix + i ) + j );
-    }
-
-    else
-        cout << "No se pueden sumar..." << endl;
-    
-    return B;
-}
-
-template < typename Type >
 Matrix<Type> Matrix<Type>::operator-( const Matrix &A ) {
     Matrix<Type> B( row, col );
 
@@ -465,5 +449,20 @@ ostream& operator <<( ostream &o, const Matrix <Type> M ) {
 	return o;
 }
 
+template < typename Type >
+Matrix<Type> Matrix<Type>::operator+( const Matrix &A ) {
+    Matrix<Type> B( row, col );
+
+    if( row == A.row && col == A.col ) {
+        for( int i = 0; i < row; ++i )
+            for( int j = 0; j < col; ++j )
+                *(*( B.matrix + i ) + j ) = *(*( matrix + i ) + j ) + *(*( A.matrix + i ) + j );
+    }
+
+    else
+        cout << "No se pueden sumar..." << endl;
+    
+    return B;
+}
 
 #endif
