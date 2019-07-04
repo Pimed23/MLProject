@@ -28,7 +28,7 @@ int main() {
     Matrix<double> t1(25,401);
     t1.fillArchive("Theta1data.txt");
     Matrix<double> t2(10,26);
-	t2.fillArchive("Theta2data.txt");
+    t2.fillArchive("Theta2data.txt");
 	
     NeuralNetwork* a;
     a = a->getInstance(3,n,X,y,1.0);
@@ -38,7 +38,6 @@ int main() {
     Matrix<double> test(1,400);
     test.fillArchive("num8.txt");
     //a.gradientDescent(0.5);
-    //cout<<a.feedForwardPropagation();
     a->prediction(test);
     a->deleteNeuralNetwork();
     return 0;
