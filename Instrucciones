@@ -2,10 +2,10 @@ Para ejecutar y probar nuestro programa se debe tener en cuenta las siguientes f
 1) Debido al patrón de diseño singleton, las instancias de la NeuralNetwork se manejan con punteros, y al terminar de usar
 una instancia creada se debe usar el método "deleteNeuralNetwork".
 
-3) NeuralNetwork::gradientDescent(double alpha) recibe la constante alpha(learning rate para la gradiente descendente), y entrena
+2) NeuralNetwork::gradientDescent(double alpha) recibe la constante alpha(learning rate para la gradiente descendente), y entrena
 a la red neuronal.
 
-2) NeuralNetwork::setWeights(Matrix<double>& matrix) sirve para cambiar los pesos (weights o thetas) de la red neuronal, son usados
+3) NeuralNetwork::setWeights(Matrix<double>& matrix) sirve para cambiar los pesos (weights o thetas) de la red neuronal, son usados
 al momento de cargar nuestros pesos ya entrenados.
 
 4) NeuralNetwork::prediction(Matrix<double>& matrix) sirve para realizar una predicción, recibe un vector horizontal (1 x 400),
